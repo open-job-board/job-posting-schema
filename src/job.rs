@@ -23,7 +23,8 @@ pub struct Job {
     pub title: String,
 
     /// The expected work setup.
-    pub work_mode: WorkMode,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub work_mode: Option<WorkMode>,
 
     /// The team, department, or business unit the role belongs to
     /// (e.g. "Platform Engineering", "Marketing — Brand").

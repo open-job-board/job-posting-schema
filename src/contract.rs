@@ -54,11 +54,12 @@ pub struct Salary {
 }
 
 /// The employment terms of the role.
-#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Contract {
     /// Legal form of employment.
-    pub employment_type: EmploymentType,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub employment_type: Option<EmploymentType>,
 
     /// Typical working hours for this job (e.g. "1st shift", "night shift",
     /// "9am–6pm CET", "35h/week").

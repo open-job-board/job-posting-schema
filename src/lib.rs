@@ -39,28 +39,33 @@ pub struct JobPosting {
     /// Natural language the posting is written in, encoded as a BCP 47 tag
     /// (e.g. `en-US`, `fr-FR`). Lets the agent route posting text to the
     /// right NLP pipeline or translation step.
-    pub language: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub language: Option<String>,
 
     /// Date on which the job posting was published.
-    pub posted_at: NaiveDate,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub posted_at: Option<NaiveDate>,
 
     /// Canonical URL of the original job posting.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
 
     /// The organization offering the job.
-    pub organization: organization,
+    pub organization: Organization,
 
     /// The role itself — what the job is about and where it sits in the
     /// organization.
     pub job: Job,
 
     /// The employment terms of the role.
-    pub contract: Contract,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contract: Option<Contract>,
 
     /// What the hiring organization expects from candidates.
-    pub requirements: Requirements,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub requirements: Option<Requirements>,
 
     /// How to apply for the role.
-    pub application: Application,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub application: Option<Application>,
 }
