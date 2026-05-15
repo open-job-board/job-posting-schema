@@ -3,7 +3,7 @@
 A simplified, business-oriented schema for representing job postings. Inspired by [schema.org/JobPosting](https://schema.org/JobPosting), but more concise and tailored as an API interface contract.
 
 A `JobPosting` is a single object composed of the following top-level groups:
-- `hiringOrganization` — who is hiring
+- `organization` — who is hiring
 - `job` — what the role is
 - `contract` — under what terms
 - `requirements` — what the candidate needs
@@ -12,7 +12,7 @@ A `JobPosting` is a single object composed of the following top-level groups:
 
 ---
 
-# hiringOrganization
+# organization
 Type: Object
 Description: The organization offering the job.
 
@@ -226,7 +226,7 @@ Description: The date on which the job posting was published.
 
 # Industry vocabulary
 
-Shared enum used by `hiringOrganization.industries` (array) and `job.industry` (single value). Values are stable kebab-case slugs; labels are intended for display and may be re-worded without breaking the contract.
+Shared enum used by `organization.industries` (array) and `job.industry` (single value). Values are stable kebab-case slugs; labels are intended for display and may be re-worded without breaking the contract.
 
 | Value | Label |
 |---|---|

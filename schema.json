@@ -1,0 +1,423 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JobPosting",
+  "description": "A simplified, business-oriented job posting.\n\nComposed of five top-level groups (`organization`, `job`, `contract`, `requirements`, `application`) plus posting-level metadata (`id`, `language`, `url`, `postedAt`).",
+  "type": "object",
+  "required": [
+    "application",
+    "contract",
+    "organization",
+    "id",
+    "job",
+    "language",
+    "postedAt",
+    "requirements"
+  ],
+  "properties": {
+    "application": {
+      "description": "How to apply for the role.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Application"
+        }
+      ]
+    },
+    "contract": {
+      "description": "The employment terms of the role.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Contract"
+        }
+      ]
+    },
+    "organization": {
+      "description": "The organization offering the job.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/organization"
+        }
+      ]
+    },
+    "id": {
+      "description": "Stable unique identifier for the job posting, assigned by the system that owns the contract. Used to cross-reference the same posting across API calls and storage layers.",
+      "type": "string"
+    },
+    "job": {
+      "description": "The role itself — what the job is about and where it sits in the organization.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Job"
+        }
+      ]
+    },
+    "language": {
+      "description": "Natural language the posting is written in, encoded as a BCP 47 tag (e.g. `en-US`, `fr-FR`). Lets the agent route posting text to the right NLP pipeline or translation step.",
+      "type": "string"
+    },
+    "postedAt": {
+      "description": "Date on which the job posting was published.",
+      "type": "string",
+      "format": "date"
+    },
+    "requirements": {
+      "description": "What the hiring organization expects from candidates.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Requirements"
+        }
+      ]
+    },
+    "url": {
+      "description": "Canonical URL of the original job posting.",
+      "type": ["string", "null"]
+    }
+  },
+  "definitions": {
+    "Application": {
+      "description": "How to apply for the role.",
+      "type": "object",
+      "properties": {
+        "contact": {
+          "description": "Name and/or role of a contact person at the hiring organization (e.g. \"Jane Doe — Talent Acquisition\").",
+          "type": ["string", "null"]
+        },
+        "deadline": {
+          "description": "Last date on which applications are accepted. Maps to schema.org's `validThrough` and is useful for deprioritizing or archiving expiring postings.",
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "email": {
+          "description": "An email address to which applications can be sent.",
+          "type": ["string", "null"]
+        },
+        "url": {
+          "description": "A URL to the application form or applicant tracking system.",
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "Contract": {
+      "description": "The employment terms of the role.",
+      "type": "object",
+      "required": ["employmentType"],
+      "properties": {
+        "duration": {
+          "description": "Expected duration of the employment as advertised by the employer. Relevant for postings with a clearly defined period (e.g. seasonal work, maternity-leave replacement, other temporary engagements). Use ISO 8601 duration format when possible (e.g. \"P6M\").",
+          "type": ["string", "null"]
+        },
+        "employmentType": {
+          "description": "Legal form of employment.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/EmploymentType"
+            }
+          ]
+        },
+        "immediateStart": {
+          "description": "Whether the employer is looking for someone who can start immediately. When `true`, `startsFrom` is typically the posting date or earlier.",
+          "type": ["boolean", "null"]
+        },
+        "incentives": {
+          "description": "Bonus, commission, equity, and other variable compensation aspects of the job.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "salary": {
+          "description": "Compensation offered for the role.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Salary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startsFrom": {
+          "description": "Earliest date on which the role can begin.",
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "telecommuteDaysPerWeek": {
+          "description": "Number of days per week the role can be performed remotely. Only meaningful when `job.workMode` is `hybrid`.",
+          "type": ["integer", "null"],
+          "format": "uint8",
+          "minimum": 0.0
+        },
+        "workHours": {
+          "description": "Typical working hours for this job (e.g. \"1st shift\", \"night shift\", \"9am–6pm CET\", \"35h/week\").",
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "EmploymentType": {
+      "description": "Legal form of employment. `permanent` is an open-ended contract; `fixed-term` is time-limited employment; `freelance` is an independent-contractor engagement; `zero-hours` is on-call work without a guaranteed minimum; `internship` is a student/trainee position.",
+      "type": "string",
+      "enum": [
+        "permanent",
+        "fixed-term",
+        "freelance",
+        "zero-hours",
+        "internship"
+      ]
+    },
+    "organization": {
+      "description": "The organization offering the job.",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "foundedYear": {
+          "description": "The year the organization was founded (four-digit year, e.g. `2017`). Useful for distinguishing young startups from established companies.",
+          "type": ["integer", "null"],
+          "format": "uint16",
+          "minimum": 0.0
+        },
+        "industries": {
+          "description": "The industries the organization operates in. Multiple values are allowed for diversified employers or conglomerates.",
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/Industry"
+          }
+        },
+        "name": {
+          "description": "The legal or commonly-used name of the hiring organization.",
+          "type": "string"
+        },
+        "opportunities": {
+          "description": "The career-growth opportunities a successful applicant can expect at this organization (e.g. internal mobility, training budget, mentoring, fast-track to senior roles).",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "overview": {
+          "description": "A short description of the organization's mission, products, and culture. Helps the applicant understand what kind of company is hiring.",
+          "type": ["string", "null"]
+        },
+        "size": {
+          "description": "The headcount bracket of the organization.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/OrganizationSize"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Industry": {
+      "description": "Shared industry vocabulary. Values are stable kebab-case slugs; labels are for display only and may be re-worded without breaking the contract.",
+      "type": "string",
+      "enum": [
+        "advertising-marketing-agency",
+        "architecture",
+        "banking-insurance-finance",
+        "consulting-audit",
+        "corporate-services",
+        "culture-media-entertainment",
+        "distribution",
+        "education-training-recruitment",
+        "engineering",
+        "fashion-luxury-beauty-lifestyle",
+        "food-and-beverage",
+        "health-social-environment",
+        "hotel-tourism-leisure",
+        "industry",
+        "legal-law",
+        "mobility-transport",
+        "nonprofit-association",
+        "public-administration",
+        "real-estate",
+        "tech"
+      ]
+    },
+    "Job": {
+      "description": "The role itself — what the job is about and where it sits in the organization.",
+      "type": "object",
+      "required": ["title", "workMode"],
+      "properties": {
+        "benefits": {
+          "description": "Non-compensation perks offered with the role (e.g. health insurance, meal vouchers, equipment budget, learning stipend).",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "context": {
+          "description": "A short narrative explaining why this role exists right now — a new project, a growth phase, a replacement, etc. Helps the applicant understand the motivation behind the posting.",
+          "type": ["string", "null"]
+        },
+        "industry": {
+          "description": "The primary industry this specific role is associated with. May differ from the hiring organization's `industries` (e.g. an industrial company hiring for its software division).",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Industry"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locations": {
+          "description": "The physical locations where the role can be based. Multiple values indicate the candidate may choose between them. Recommended format: \"City, Country\" or ISO 3166 codes.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "organizationUnit": {
+          "description": "The team, department, or business unit the role belongs to (e.g. \"Platform Engineering\", \"Marketing — Brand\").",
+          "type": ["string", "null"]
+        },
+        "overview": {
+          "description": "A detailed description of the role's purpose and business value, the team size and composition, the working conditions, and what success in the role looks like.",
+          "type": ["string", "null"]
+        },
+        "responsibilities": {
+          "description": "The day-to-day duties and ownership areas expected of the role.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "description": "The plain job title as it would appear at the top of the posting (e.g. \"Senior Backend Engineer\").",
+          "type": "string"
+        },
+        "workMode": {
+          "description": "The expected work setup.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/WorkMode"
+            }
+          ]
+        },
+        "workingLanguages": {
+          "description": "The language(s) used day-to-day on the team — for meetings, internal docs, code reviews, Slack, etc. Encoded as BCP 47 tags (e.g. `[\"en\"]`, `[\"fr\", \"en\"]`). Distinct from the top-level `language`, which is the language the posting itself is written in.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "OrganizationSize": {
+      "description": "Headcount bracket of the organization. Brackets are easier to disclose publicly than exact counts and serve as a quick candidate filter (startup vs scale-up vs enterprise).",
+      "type": "string",
+      "enum": [
+        "1-10",
+        "11-50",
+        "51-200",
+        "201-500",
+        "501-1000",
+        "1001-5000",
+        "5000+"
+      ]
+    },
+    "Requirements": {
+      "description": "What the hiring organization expects from candidates.",
+      "type": "object",
+      "properties": {
+        "administrative": {
+          "description": "Legal or administrative prerequisites (e.g. \"EU work authorization\", \"security clearance\", \"criminal record check\").",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "education": {
+          "description": "Required or preferred education credentials (e.g. \"Bachelor's in Computer Science\", \"Engineering degree\").",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "eligibleLocations": {
+          "description": "Geographic restrictions on the candidate — typically countries or regions where the applicant must hold the right to work. Distinct from `job.locations`, which is where the role is physically based.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "experienceInPlaceOfEducation": {
+          "description": "Whether equivalent professional experience may be accepted in place of the formal education requirement.",
+          "type": ["boolean", "null"]
+        },
+        "experiences": {
+          "description": "Required prior professional experience expressed as discrete qualitative items (e.g. \"Experience in B2B SaaS\", \"Experience leading a team of 5+\", \"Worked in a regulated industry\"). Quantitative minimums belong in `yearsOfExperience`.",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "qualifications": {
+          "description": "Required certifications, licenses, or formal qualifications (e.g. \"PMP\", \"AWS Solutions Architect\", \"Driver's license B\").",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "skills": {
+          "description": "Required or preferred hard and soft skills (e.g. \"Python\", \"Kubernetes\", \"stakeholder management\").",
+          "type": ["array", "null"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "yearsOfExperience": {
+          "description": "Minimum number of years of professional experience required for the role. A scalar field is much easier to filter on than free-text bullets.",
+          "type": ["integer", "null"],
+          "format": "uint8",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Salary": {
+      "description": "Compensation offered for the role.",
+      "type": "object",
+      "required": ["currency", "period"],
+      "properties": {
+        "currency": {
+          "description": "Currency used for the main salary information, encoded using ISO 4217 (e.g. \"EUR\", \"USD\").",
+          "type": "string"
+        },
+        "estimated": {
+          "description": "Whether this salary information is estimated (e.g. by a third party or by the agent) rather than explicitly provided by the hiring organization.",
+          "type": ["boolean", "null"]
+        },
+        "maxAmount": {
+          "description": "Gross maximum amount for the indicated period in the indicated currency.",
+          "type": ["number", "null"],
+          "format": "double"
+        },
+        "minAmount": {
+          "description": "Gross minimum amount for the indicated period in the indicated currency.",
+          "type": ["number", "null"],
+          "format": "double"
+        },
+        "period": {
+          "description": "Time unit over which `minAmount` and `maxAmount` are computed.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/SalaryPeriod"
+            }
+          ]
+        }
+      }
+    },
+    "SalaryPeriod": {
+      "description": "Time unit over which `minAmount` and `maxAmount` are computed.",
+      "type": "string",
+      "enum": ["hour", "day", "month", "year", "project"]
+    },
+    "WorkMode": {
+      "description": "Expected work setup. `onsite` requires full physical presence; `hybrid` mixes on-site and remote days (see `contract.telecommuteDaysPerWeek`); `remote` allows fully remote work with no required on-site presence.",
+      "type": "string",
+      "enum": ["onsite", "hybrid", "remote"]
+    }
+  }
+}
