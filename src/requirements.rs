@@ -29,6 +29,7 @@ pub struct Requirements {
     /// Minimum number of years of professional experience required for the
     /// role. A scalar field is much easier to filter on than free-text bullets.
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(range(min = 0, max = 50))]
     pub years_of_experience: Option<u8>,
 
     /// Required prior professional experience expressed as discrete

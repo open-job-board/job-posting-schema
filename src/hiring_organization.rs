@@ -43,6 +43,7 @@ pub struct Organization {
     /// The year the organization was founded (four-digit year, e.g. `2017`).
     /// Useful for distinguishing young startups from established companies.
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(range(min = 1000, max = 9999))]
     pub founded_year: Option<u16>,
 
     /// The industries the organization operates in. Multiple values are

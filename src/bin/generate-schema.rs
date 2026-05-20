@@ -8,6 +8,7 @@ fn main() {
     let schema = schema_for!(JobPosting);
     let mut value = serde_json::to_value(&schema).expect("failed to convert schema to value");
     enforce_openai_object_rules(&mut value);
+    strip_non_standard_formats(&mut value);
     let json = serde_json::to_string_pretty(&value)
         .expect("failed to serialize JSON schema");
 
@@ -62,6 +63,43 @@ fn enforce_openai_object_rules(value: &mut Value) {
         Value::Array(items) => {
             for item in items {
                 enforce_openai_object_rules(item);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// schemars emits Rust-specific `format` hints (`uint8`, `uint16`, `double`,
+/// etc.) that are not part of the JSON Schema spec. Strip any format value
+/// not in the spec's defined set; numeric bounds carry the real constraints.
+fn strip_non_standard_formats(value: &mut Value) {
+    const STANDARD_FORMATS: &[&str] = &[
+        "date-time", "date", "time", "duration",
+        "email", "idn-email",
+        "hostname", "idn-hostname",
+        "ipv4", "ipv6",
+        "uri", "uri-reference", "iri", "iri-reference",
+        "uri-template",
+        "uuid",
+        "json-pointer", "relative-json-pointer",
+        "regex",
+    ];
+    match value {
+        Value::Object(map) => {
+            let drop = matches!(
+                map.get("format").and_then(Value::as_str),
+                Some(f) if !STANDARD_FORMATS.contains(&f)
+            );
+            if drop {
+                map.remove("format");
+            }
+            for child in map.values_mut() {
+                strip_non_standard_formats(child);
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                strip_non_standard_formats(item);
             }
         }
         _ => {}

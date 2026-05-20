@@ -14,6 +14,18 @@ pub enum WorkMode {
     Remote,
 }
 
+/// A geographic point in WGS 84 decimal degrees.
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq)]
+pub struct Geolocation {
+    /// Longitude in decimal degrees, in the range `[-180, 180]`.
+    #[schemars(range(min = -180.0, max = 180.0))]
+    pub lng: f64,
+
+    /// Latitude in decimal degrees, in the range `[-90, 90]`.
+    #[schemars(range(min = -90.0, max = 90.0))]
+    pub lat: f64,
+}
+
 /// The role itself — what the job is about and where it sits in the organization.
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -58,6 +70,12 @@ pub struct Job {
     /// "City, Country" or ISO 3166 codes.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub locations: Option<Vec<String>>,
+
+    /// Geographic coordinates of the primary work location, as a WGS 84
+    /// (longitude, latitude) pair in decimal degrees. When `locations`
+    /// contains multiple entries, this refers to the first / primary one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub geolocation: Option<Geolocation>,
 
     /// The language(s) used day-to-day on the team — for meetings, internal
     /// docs, code reviews, Slack, etc. Encoded as BCP 47 tags

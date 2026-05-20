@@ -40,10 +40,12 @@ pub struct Salary {
 
     /// Gross minimum amount for the indicated period in the indicated currency.
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(range(min = 0.0))]
     pub min_amount: Option<f64>,
 
     /// Gross maximum amount for the indicated period in the indicated currency.
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(range(min = 0.0))]
     pub max_amount: Option<f64>,
 
     /// Whether this salary information is estimated (e.g. by a third party
@@ -94,5 +96,6 @@ pub struct Contract {
     /// Number of days per week the role can be performed remotely. Only
     /// meaningful when `job.workMode` is `hybrid`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(range(min = 0, max = 5))]
     pub telecommute_days_per_week: Option<u8>,
 }

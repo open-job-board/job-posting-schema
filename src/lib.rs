@@ -16,7 +16,7 @@ pub use application::Application;
 pub use contract::{Contract, EmploymentType, Salary, SalaryPeriod};
 pub use hiring_organization::{Organization, OrganizationSize};
 pub use industry::Industry;
-pub use job::{Job, WorkMode};
+pub use job::{Geolocation, Job, WorkMode};
 pub use requirements::Requirements;
 
 use chrono::NaiveDate;
