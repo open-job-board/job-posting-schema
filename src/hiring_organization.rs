@@ -36,6 +36,11 @@ pub struct Organization {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub overview: Option<String>,
 
+    /// URL pointing to the organization's logo image.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(url)]
+    pub logo: Option<String>,
+
     /// The headcount bracket of the organization.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<OrganizationSize>,

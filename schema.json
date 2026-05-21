@@ -332,6 +332,14 @@
             "null"
           ]
         },
+        "logo": {
+          "description": "URL pointing to the organization's logo image.",
+          "format": "uri",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "name": {
           "description": "The legal or commonly-used name of the hiring organization.",
           "type": "string"
@@ -368,6 +376,7 @@
       "required": [
         "foundedYear",
         "industries",
+        "logo",
         "name",
         "opportunities",
         "overview",
