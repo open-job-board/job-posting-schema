@@ -41,6 +41,13 @@ pub struct Organization {
     #[schemars(url)]
     pub logo: Option<String>,
 
+    /// URL of the organization's website or primary social-media profile
+    /// (e.g. LinkedIn, X, GitHub). Lets the applicant learn more about the
+    /// employer beyond the posting itself.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[schemars(url)]
+    pub url: Option<String>,
+
     /// The headcount bracket of the organization.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size: Option<OrganizationSize>,

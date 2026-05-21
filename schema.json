@@ -371,6 +371,14 @@
             }
           ],
           "description": "The headcount bracket of the organization."
+        },
+        "url": {
+          "description": "URL of the organization's website or primary social-media profile (e.g. LinkedIn, X, GitHub). Lets the applicant learn more about the employer beyond the posting itself.",
+          "format": "uri",
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -380,7 +388,8 @@
         "name",
         "opportunities",
         "overview",
-        "size"
+        "size",
+        "url"
       ],
       "type": "object"
     },
