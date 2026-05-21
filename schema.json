@@ -334,7 +334,6 @@
         },
         "logo": {
           "description": "URL pointing to the organization's logo image.",
-          "format": "uri",
           "type": [
             "string",
             "null"
@@ -374,7 +373,6 @@
         },
         "url": {
           "description": "URL of the organization's website or primary social-media profile (e.g. LinkedIn, X, GitHub). Lets the applicant learn more about the employer beyond the posting itself.",
-          "format": "uri",
           "type": [
             "string",
             "null"
